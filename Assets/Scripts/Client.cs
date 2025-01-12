@@ -39,12 +39,6 @@ public class Client : MonoBehaviour
         StartReceive();
     }
 
-    void AcceptCallback(IAsyncResult iar)
-    {
-        Socket server = _socket.EndAccept(iar);
-        StartReceive();
-    }
-
     void Send()
     {
         _socket.Send(Encoding.UTF8.GetBytes("hello"), SocketFlags.None);
