@@ -39,8 +39,8 @@ public class Client : MonoBehaviour
         StartReceive();
     }
 
-    void Send()
-    {
-        _socket.Send(Encoding.UTF8.GetBytes("hello"), SocketFlags.None);
-    }
+    // void Send()
+    // {
+    //     _socket.Send(Encoding.UTF8.GetBytes("hello"), SocketFlags.None);
+    // }
 }
