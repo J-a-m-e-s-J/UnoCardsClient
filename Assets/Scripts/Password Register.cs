@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Register
+namespace UnoCardsClient.Register
 {
     public class PasswordRegister : MonoBehaviour
     {

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnoCardsClient.Register
+namespace UnoCardsClient.MainPage
 {
-    public class PasswordConfirm : MonoBehaviour
+    public class LoginButtonMainPage : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
@@ -18,5 +18,4 @@ namespace UnoCardsClient.Register
             
         }
     }
-
 }
