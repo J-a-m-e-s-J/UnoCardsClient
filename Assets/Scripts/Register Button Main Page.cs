@@ -11,7 +11,7 @@ namespace UnoCardsClient.MainPage
     public class RegisterButtonMainPage : MonoBehaviour
     {
         private Button _registerButtonMainPage;
-        public static bool BtnOnClick = false;
+        public static bool BtnOnClick;
         
         void Start()
         {

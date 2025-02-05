@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine.UI;
 using UnoCardsClient.MainPage;
+using Statics;
 
 namespace UnoCardsClient.Client
 {
@@ -17,14 +18,16 @@ namespace UnoCardsClient.Client
         private byte[] _buffer = new byte[1024];
         private Button _button;
         private IPEndPoint _clientEndPoint;
+        private GameObject _gameObjectTemp;
         
         // Start is called before the first frame update
         void Start()
         {
             // SceneManager.LoadSceneAsync("Main");
-            if (SceneManager.GetActiveScene().name != "Main")
+            if (SceneManager.GetActiveScene().name != "Main" && !StaticVariables.GameRunning)
             {
                 SceneManager.LoadScene("Main");
+                StaticVariables.GameRunning = true;
             }
             _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _client.Connect("127.0.0.1", 25565);
@@ -39,16 +42,21 @@ namespace UnoCardsClient.Client
             switch (SceneManager.GetActiveScene().name)
             {
                 case "Main":
-                    var gameObjectTemp = GameObject.Find("Register Button");
-                    _button = gameObjectTemp.GetComponent<Button>();
+                    _gameObjectTemp = GameObject.Find("Register Button");
+                    _button = _gameObjectTemp.GetComponent<Button>();
                     if (RegisterButtonMainPage.BtnOnClick)
                     {
-                        // Send语法：场景-按钮 事件 => 操作 / From IP 客户端IP
-                        _client.Send(Encoding.UTF8.GetBytes(""));
+                        // Send语法: 执行任务名 (相关参数(空格分隔，若无参数则写一对空括号)) -> 客户端ip
+                        // _client.Send(Encoding.UTF8.GetBytes($"log (\":ip entering register page\":{_clientEndPoint.Address}) -> " + _clientEndPoint.Address));
+                        _client.Send(Encoding.UTF8.GetBytes("exit"));
                     }
                     break;
+                
+                case "Register":
+                    break;
             }
-            Debug.Log(1);
+            // Debug.Log(1);
+            _client.Send(Encoding.UTF8.GetBytes("exit"));
         }
 
         void StartReceive()
