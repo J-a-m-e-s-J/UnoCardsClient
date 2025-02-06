@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Statics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ namespace UnoCardsClient.Register
         private TMP_InputField _pwd;
         private TMP_InputField _pwdConfirm;
         private TextMeshProUGUI _instructionText;
+        private RectTransform _instructionTextTransform;
         private GameObject _gameObjectTemp;
         
         // Start is called before the first frame update
@@ -31,9 +33,9 @@ namespace UnoCardsClient.Register
 
             _gameObjectTemp = GameObject.Find("Instruction Text");
             _instructionText = _gameObjectTemp.GetComponent<TextMeshProUGUI>();
-
-            _instructionText.text = "";
-
+            _instructionTextTransform = _gameObjectTemp.GetComponent<RectTransform>();
+            StaticFunctions.Hide(_instructionTextTransform);
+            
             _gameObjectTemp = null;
             
             _submitButton.onClick.AddListener(OnButtonClick);
@@ -49,11 +51,13 @@ namespace UnoCardsClient.Register
         {
             if (_pwd.text != _pwdConfirm.text)
             {
-                _instructionText.text = "The password entered twice is inconsistent!";
+                StaticFunctions.Show(_instructionTextTransform);
                 _pwd.text = "";
                 _pwdConfirm.text = "";
                 return;
             }
+
+            StaticVariables.Registering = true;
         }
     }
 }

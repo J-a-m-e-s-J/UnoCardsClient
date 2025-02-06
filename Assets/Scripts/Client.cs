@@ -27,8 +27,8 @@ namespace UnoCardsClient.Client
             if (SceneManager.GetActiveScene().name != "Main" && !StaticVariables.GameRunning)
             {
                 SceneManager.LoadScene("Main");
-                StaticVariables.GameRunning = true;
             }
+            StaticVariables.GameRunning = true;
             _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _client.Connect("127.0.0.1", 25565);
             _clientEndPoint = _client.LocalEndPoint as IPEndPoint;
@@ -47,12 +47,21 @@ namespace UnoCardsClient.Client
                     if (RegisterButtonMainPage.BtnOnClick)
                     {
                         // Send语法: 执行任务名 (相关参数(空格分隔，若无参数则写一对空括号)) -> 客户端ip
-                        // _client.Send(Encoding.UTF8.GetBytes($"log (\":ip entering register page\":{_clientEndPoint.Address}) -> " + _clientEndPoint.Address));
-                        _client.Send(Encoding.UTF8.GetBytes("exit"));
+                        // 函数：
+                        // exit () -> 退出服务端
+                        // log (字符串) -> 输出
+                        // sqlite (操作 (相关参数)) -> 操作：insert(username, password), select(), update()
+                        // client (操作 (相关参数)) -> 操作：exit()
+                        _client.Send(Encoding.UTF8.GetBytes($"log (\"{_clientEndPoint.Address} entering register page\") -> " + _clientEndPoint.Address));
+                        // _client.Send(Encoding.UTF8.GetBytes("exit"));
                     }
                     break;
                 
                 case "Register":
+                    if (StaticVariables.Registering)
+                    {
+                        _client.Send(Encoding.UTF8.GetBytes($"sqlite ()"));
+                    }
                     break;
             }
             // Debug.Log(1);
@@ -79,32 +88,3 @@ namespace UnoCardsClient.Client
         }
     }
 }
-
-// using System;
-// using System.Net;
-// using System.Net.Sockets;
-//
-// class ConnectedClient
-// {
-//     static void Main()
-//     {
-//         try
-//         {
-//             // 创建一个TCP套接字并连接到服务器
-             // Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-//             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888);
-//             clientSocket.Connect(serverEndPoint);
-//
-//             // 获取客户端自己的IP地址
-             // IPEndPoint clientEndPoint = clientSocket.LocalEndPoint as IPEndPoint;
-             // Console.WriteLine($"客户端IP地址为: {clientEndPoint.Address}");
-//
-//             // 关闭套接字
-//             clientSocket.Close();
-//         }
-//         catch (Exception ex)
-//         {
-//             Console.WriteLine($"获取IP地址出错: {ex.Message}");
-//         }
-//     }
-// }
