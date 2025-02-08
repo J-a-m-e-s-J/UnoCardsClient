@@ -50,8 +50,8 @@ namespace UnoCardsClient.Client
                         // 函数：
                         // exit () -> 退出服务端
                         // log (字符串) -> 输出
-                        // sqlite (操作 (相关参数)) -> 操作：insert(username, password), select(), update()
-                        // client (操作 (相关参数)) -> 操作：exit()
+                        // sqlite (操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username)
+                        // client (操作 相关参数) -> 操作：exit()
                         _client.Send(Encoding.UTF8.GetBytes($"log (\"{_clientEndPoint.Address} entering register page\") -> " + _clientEndPoint.Address));
                         // _client.Send(Encoding.UTF8.GetBytes("exit"));
                     }
