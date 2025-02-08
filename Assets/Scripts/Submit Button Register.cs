@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Statics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace UnoCardsClient.Register
@@ -56,8 +58,23 @@ namespace UnoCardsClient.Register
                 _pwdConfirm.text = "";
                 return;
             }
-
+            
+            StaticVariables.CurrentUsername = _userName.text;
+            StaticVariables.CurrentPassword = _pwd.text;
             StaticVariables.Registering = true;
+            
+            while (StaticVariables.RegisterStatus == null) ;
+            if (StaticVariables.RegisterStatus == "register success")
+            {
+                _instructionText.text = "Registered successfully";
+                StaticFunctions.Show(_instructionTextTransform);
+                Thread.Sleep(2000);
+                SceneManager.LoadScene("Main Game");
+            }
+            else
+            {
+                _instructionText.text = "Your username has already existed";
+            }
         }
     }
 }

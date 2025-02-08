@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine.UI;
 using UnoCardsClient.MainPage;
+using UnoCardsClient.Register;
 using Statics;
 
 namespace UnoCardsClient.Client
@@ -52,7 +53,7 @@ namespace UnoCardsClient.Client
                         // log (字符串) -> 输出
                         // sqlite (操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username)
                         // client (操作 相关参数) -> 操作：exit()
-                        _client.Send(Encoding.UTF8.GetBytes($"log (\"{_clientEndPoint.Address} entering register page\") -> " + _clientEndPoint.Address));
+                        _client.Send(Encoding.UTF8.GetBytes($"log(\"{_clientEndPoint.Address} entering register page\")"));
                         // _client.Send(Encoding.UTF8.GetBytes("exit"));
                     }
                     break;
@@ -60,12 +61,11 @@ namespace UnoCardsClient.Client
                 case "Register":
                     if (StaticVariables.Registering)
                     {
-                        _client.Send(Encoding.UTF8.GetBytes($"sqlite ()"));
+                        _client.Send(Encoding.UTF8.GetBytes($"sqlite(insert {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})"));
                     }
                     break;
             }
             // Debug.Log(1);
-            _client.Send(Encoding.UTF8.GetBytes("exit"));
         }
 
         void StartReceive()
@@ -79,12 +79,19 @@ namespace UnoCardsClient.Client
             if (len == 0) return;
             string message = Encoding.UTF8.GetString(_buffer, 0, len);
             Debug.Log(message);
+            // HandleMessage(message);
             StartReceive();
         }
 
-        void Send(string msg)
+        void HandleMessage(string message)
         {
-            _client.Send(Encoding.UTF8.GetBytes(msg));
+            Debug.Log(message);
+            // switch (SceneManager.GetActiveScene().name)
+            // {
+            //     case "Register":
+            //         StaticVariables.RegisterStatus = message == "username existed" ? message : "register success";
+            //         break;
+            // }
         }
     }
 }
