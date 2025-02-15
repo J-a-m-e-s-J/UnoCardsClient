@@ -9,7 +9,7 @@ using System.Text;
 using UnityEngine.UI;
 using UnoCardsClient.MainPage;
 using UnoCardsClient.Register;
-using Statics;
+using UnoCardsClient.Statics;
 
 namespace UnoCardsClient.Client
 {
@@ -48,7 +48,7 @@ namespace UnoCardsClient.Client
                         // 函数：
                         // exit-() -> 退出服务端
                         // log-(字符串) -> 输出
-                        // sqlite-(操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username)
+                        // sqlite-(操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username), login(username, password)
                         // client-(操作 相关参数) -> 操作：exit()
                         SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering register page)");
                     }
@@ -59,6 +59,15 @@ namespace UnoCardsClient.Client
                     {
                         SendMsg($"sqlite-(insert {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})-{StaticVariables.ClientEndPoint.Address}-{StaticVariables.ClientEndPoint.Port}");
                         StaticVariables.Registering = false;
+                    }
+                    break;
+                
+                case "Login":
+                    if (StaticVariables.Logining)
+                    {
+                        SendMsg($"sqlite-(login {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})-{StaticVariables.ClientEndPoint.Address}-{StaticVariables.ClientEndPoint.Port}");
+                        Debug.Log("Login");
+                        StaticVariables.Logining = false;
                     }
                     break;
             }
@@ -81,23 +90,23 @@ namespace UnoCardsClient.Client
             int len = StaticVariables.Client.EndReceive(iar);
             if (len == 0) return;
             string message = Encoding.UTF8.GetString(_buffer, 0, len);
-            // Debug.Log(message);
             HandleMessage(message);
-            // Debug.Log(StaticVariables.RegisterStatus);
-            // Debug.Log(StaticVariables.RegisterStatusReceived);
             StartReceive();
         }
 
         void HandleMessage(string message)
         {
-            // Debug.Log(message);
             switch (StaticVariables.ActiveSceneName)
             {
                 case "Register":
                     StaticVariables.RegisterStatus = message!;
                     StaticVariables.RegisterStatusReceived = true;
-                    // Debug.Log(StaticVariables.RegisterStatus);
-                    // Debug.Log(StaticVariables.RegisterStatusReceived);
+                    break;
+                
+                case "Login":
+                    StaticVariables.LoginStatus = message!;
+                    StaticVariables.LoginStatusReceived = true;
+                    Debug.Log(StaticVariables.LoginStatus);
                     break;
             }
         }

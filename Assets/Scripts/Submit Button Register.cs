@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Statics;
+using UnoCardsClient.Statics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Statics;
+using UnoCardsClient.Statics;
 
 namespace UnoCardsClient.MainPage
 {
@@ -20,10 +20,6 @@ namespace UnoCardsClient.MainPage
             _registerButtonMainPage = GetComponent<Button>();
             _registerButtonMainPage.onClick.AddListener(BtnOnClickFunc);
             // _registerButtonMainPageTransform = GetComponent<RectTransform>();
-        }
-
-        private void Update()
-        {
         }
 
         void BtnOnClickFunc()

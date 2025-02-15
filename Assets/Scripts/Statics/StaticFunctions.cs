@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Statics
+namespace UnoCardsClient.Statics
 {
     public static class StaticFunctions
     {
