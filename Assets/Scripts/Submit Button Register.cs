@@ -46,13 +46,37 @@ namespace UnoCardsClient.Register
         // Update is called once per frame
         void Update()
         {
-            
+            if (StaticVariables.RegisterStatusReceived)
+            {
+                switch (StaticVariables.RegisterStatus)
+                {
+                    case "Username already exists":
+                        _instructionText.text = "Username already exists!";
+                        _userName.text = "";
+                        StaticFunctions.Show(_instructionTextTransform);
+                        break;
+                    
+                    case "Password contains space":
+                        _instructionText.text = "Password contains space!";
+                        _pwd.text = "";
+                        _pwdConfirm.text = "";
+                        StaticFunctions.Show(_instructionTextTransform);
+                        break;
+                    
+                    case "Register success":
+                        SceneManager.LoadScene("Main Game");
+                        break;
+                }
+
+                StaticVariables.RegisterStatusReceived = false;
+            }
         }
 
         void OnButtonClick()
         {
             if (_pwd.text != _pwdConfirm.text)
             {
+                _instructionText.text = "Passwords do not match!";
                 StaticFunctions.Show(_instructionTextTransform);
                 _pwd.text = "";
                 _pwdConfirm.text = "";
@@ -62,19 +86,6 @@ namespace UnoCardsClient.Register
             StaticVariables.CurrentUsername = _userName.text;
             StaticVariables.CurrentPassword = _pwd.text;
             StaticVariables.Registering = true;
-            
-            while (StaticVariables.RegisterStatus == null) ;
-            if (StaticVariables.RegisterStatus == "register success")
-            {
-                _instructionText.text = "Registered successfully";
-                StaticFunctions.Show(_instructionTextTransform);
-                Thread.Sleep(2000);
-                SceneManager.LoadScene("Main Game");
-            }
-            else
-            {
-                _instructionText.text = "Your username has already existed";
-            }
         }
     }
 }

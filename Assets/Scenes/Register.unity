@@ -1249,9 +1249,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'The passwords entered twice do not match!
-
-    Please check again!'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 79fabc74a01faab4b9e3d055ec29fa54, type: 2}
   m_sharedMaterial: {fileID: -3391204187373958672, guid: 79fabc74a01faab4b9e3d055ec29fa54, type: 2}

@@ -15,83 +15,101 @@ namespace UnoCardsClient.Client
 {
     public class Client : MonoBehaviour
     {
-        private Socket _client;
         private byte[] _buffer = new byte[1024];
-        private Button _button;
-        private IPEndPoint _clientEndPoint;
         private GameObject _gameObjectTemp;
         
         // Start is called before the first frame update
         void Start()
         {
-            // SceneManager.LoadSceneAsync("Main");
-            if (SceneManager.GetActiveScene().name != "Main" && !StaticVariables.GameRunning)
+            if (!StaticVariables.GameRunning)
             {
-                SceneManager.LoadScene("Main");
+                if (SceneManager.GetActiveScene().name != "Main")
+                {
+                    SceneManager.LoadScene("Main");
+                }
+                StaticVariables.Client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                StaticVariables.Client.Connect("127.0.0.1", 25565);
+                StaticVariables.ClientEndPoint = StaticVariables.Client.LocalEndPoint as IPEndPoint;
+                StaticVariables.GameRunning = true;
+                StartReceive();
             }
-            StaticVariables.GameRunning = true;
-            _client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _client.Connect("127.0.0.1", 25565);
-            _clientEndPoint = _client.LocalEndPoint as IPEndPoint;
-            // Debug.Log(_clientEndPoint?.Address);
-            StartReceive();
         }
 
         // Update is called once per frame
         void Update()
         {
-            switch (SceneManager.GetActiveScene().name)
+            GetActiveSceneName();
+            switch (StaticVariables.ActiveSceneName)
             {
                 case "Main":
-                    _gameObjectTemp = GameObject.Find("Register Button");
-                    _button = _gameObjectTemp.GetComponent<Button>();
-                    if (RegisterButtonMainPage.BtnOnClick)
+                    if (StaticVariables.MainPageRegisterButtonOnClick)
                     {
-                        // Send语法: 执行任务名 (相关参数(空格分隔，若无参数则写一对空括号)) -> 客户端ip
+                        // Send语法: 执行任务名-(相关参数(空格分隔，若无参数则写一对空括号))-客户端ip
                         // 函数：
-                        // exit () -> 退出服务端
-                        // log (字符串) -> 输出
-                        // sqlite (操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username)
-                        // client (操作 相关参数) -> 操作：exit()
-                        _client.Send(Encoding.UTF8.GetBytes($"log(\"{_clientEndPoint.Address} entering register page\")"));
-                        // _client.Send(Encoding.UTF8.GetBytes("exit"));
+                        // exit-() -> 退出服务端
+                        // log-(字符串) -> 输出
+                        // sqlite-(操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username)
+                        // client-(操作 相关参数) -> 操作：exit()
+                        SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering register page)");
                     }
                     break;
                 
                 case "Register":
                     if (StaticVariables.Registering)
                     {
-                        _client.Send(Encoding.UTF8.GetBytes($"sqlite(insert {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})"));
+                        SendMsg($"sqlite-(insert {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})-{StaticVariables.ClientEndPoint.Address}-{StaticVariables.ClientEndPoint.Port}");
+                        StaticVariables.Registering = false;
                     }
                     break;
             }
             // Debug.Log(1);
         }
 
+        void OnApplicationQuit()
+        {
+            StaticVariables.Client.Disconnect(false);
+            StaticVariables.Client.Close();
+        }
+
         void StartReceive()
         {
-            _client.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecieveCallback, null);
+            StaticVariables.Client.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecieveCallback, null);
         }
 
         void RecieveCallback(IAsyncResult iar)
         {
-            int len = _client.EndReceive(iar);
+            int len = StaticVariables.Client.EndReceive(iar);
             if (len == 0) return;
             string message = Encoding.UTF8.GetString(_buffer, 0, len);
-            Debug.Log(message);
-            // HandleMessage(message);
+            // Debug.Log(message);
+            HandleMessage(message);
+            // Debug.Log(StaticVariables.RegisterStatus);
+            // Debug.Log(StaticVariables.RegisterStatusReceived);
             StartReceive();
         }
 
         void HandleMessage(string message)
         {
-            Debug.Log(message);
-            // switch (SceneManager.GetActiveScene().name)
-            // {
-            //     case "Register":
-            //         StaticVariables.RegisterStatus = message == "username existed" ? message : "register success";
-            //         break;
-            // }
+            // Debug.Log(message);
+            switch (StaticVariables.ActiveSceneName)
+            {
+                case "Register":
+                    StaticVariables.RegisterStatus = message!;
+                    StaticVariables.RegisterStatusReceived = true;
+                    // Debug.Log(StaticVariables.RegisterStatus);
+                    // Debug.Log(StaticVariables.RegisterStatusReceived);
+                    break;
+            }
+        }
+
+        void SendMsg(string message)
+        {
+            StaticVariables.Client.Send(Encoding.UTF8.GetBytes(message));
+        }
+
+        void GetActiveSceneName()
+        {
+            StaticVariables.ActiveSceneName = SceneManager.GetActiveScene().name;
         }
     }
 }
