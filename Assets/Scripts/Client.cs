@@ -51,6 +51,13 @@ namespace UnoCardsClient.Client
                         // sqlite-(操作 相关参数) -> 操作：insert(username, password), update(username/password, val_username/val_password, new_password/new_username), login(username, password)
                         // client-(操作 相关参数) -> 操作：exit()
                         SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering register page)");
+                        StaticVariables.MainPageRegisterButtonOnClick = false;
+                    }
+                    
+                    if (StaticVariables.MainPageLoginButtonOnClick)
+                    {
+                        SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering login page)");
+                        StaticVariables.MainPageLoginButtonOnClick = false;
                     }
                     break;
                 
@@ -60,14 +67,25 @@ namespace UnoCardsClient.Client
                         SendMsg($"sqlite-(insert {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})-{StaticVariables.ClientEndPoint.Address}-{StaticVariables.ClientEndPoint.Port}");
                         StaticVariables.Registering = false;
                     }
+                    
+                    if (StaticVariables.MainPageLoginButtonOnClick)
+                    {
+                        SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering login page)");
+                        StaticVariables.MainPageLoginButtonOnClick = false;
+                    }
                     break;
                 
                 case "Login":
                     if (StaticVariables.Logining)
                     {
                         SendMsg($"sqlite-(login {StaticVariables.CurrentUsername} {StaticVariables.CurrentPassword})-{StaticVariables.ClientEndPoint.Address}-{StaticVariables.ClientEndPoint.Port}");
-                        Debug.Log("Login");
                         StaticVariables.Logining = false;
+                    }
+                    
+                    if (StaticVariables.MainPageRegisterButtonOnClick)
+                    {
+                        SendMsg($"log-({StaticVariables.ClientEndPoint.Address} entering register page)");
+                        StaticVariables.MainPageRegisterButtonOnClick = false;
                     }
                     break;
             }
@@ -106,7 +124,6 @@ namespace UnoCardsClient.Client
                 case "Login":
                     StaticVariables.LoginStatus = message!;
                     StaticVariables.LoginStatusReceived = true;
-                    Debug.Log(StaticVariables.LoginStatus);
                     break;
             }
         }

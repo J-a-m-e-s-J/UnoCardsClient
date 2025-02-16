@@ -52,9 +52,18 @@ namespace UnoCardsClient.Login
                         break;
                     
                     case "Login success":
-                        SceneManager.LoadScene("Main");
+                        SceneManager.LoadScene("Main Game");
+                        break;
+                    
+                    case "Login failed":
+                        _instructionText.text = "Incorrect username or password!";
+                        _userName.text = "";
+                        _pwd.text = "";
+                        StaticFunctions.Show(_instructionTextTransform);
                         break;
                 }
+                
+                StaticVariables.LoginStatusReceived = false;
             }
         }
 
